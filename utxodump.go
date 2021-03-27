@@ -23,15 +23,7 @@ func main() {
     // Version
     const Version = "1.0.1"
 
-    // Check bitcoin isn't running first
-    cmd := exec.Command("bitcoin-cli", "getnetworkinfo")
-    _, err := cmd.Output()
-    if err == nil {
-        fmt.Println("Bitcoin is running, shutdown with `bitcoin-cli stop` first. We don't want to access the chainstate LevelDB while Bitcoin is running.")
-        fmt.Println("Also make sure that bitcoind will not auto-restart after you shut it down (e.g. it's running as a systemd service.)")
-        return
-    }
-    
+    var err error
     // Check if OS type is Mac OS, then increase ulimit -n to 4096 filehandler during runtime and reset to 1024 at the end
     // Mac OS standard is 1024
     // Linux standard is already 4096 wich is also "max" for more edit etc/security/limits.conf
