@@ -28,13 +28,13 @@ func main() {
     // Mac OS standard is 1024
     // Linux standard is already 4096 wich is also "max" for more edit etc/security/limits.conf
 	if runtime.GOOS == "darwin" {
-        cmd2 := exec.Command("ulimit", "-n", "4096")
+        cmd2 := exec.Command("ulimit", "-Sn", "4096")
         fmt.Println("setting ulimit 4096\n", err)
         _, err2 := cmd2.Output()
         if err2 != nil {
             fmt.Println("setting new ulimit failed with %s\n", err)
         }
-        defer exec.Command("ulimit", "-n", "1024")
+        defer exec.Command("ulimit", "-Sn", "1024")
 	}    
 
     // Set default chainstate LevelDB and output file
@@ -498,6 +498,9 @@ func main() {
 
     }
     iter.Release() // Do not defer this, want to release iterator before closing database
+    if err = iter.Error(); err != nil {
+        fmt.Println("cannot iterate all leveldb entries err=%s", err.Error())
+    }
 
     // Final Progress Report
     // ---------------------
